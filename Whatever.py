@@ -2,7 +2,7 @@ def function1():
     print "Yo"
 
 def function2():
-    pass
+    print "Anky" * 9
 
 def function3():
     pass

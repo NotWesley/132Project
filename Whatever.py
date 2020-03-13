@@ -7,10 +7,10 @@ def function2():
 def function3():
     pass
 
-def function4():
+def functionWhatever():
     pass
 
 function1()
 function2()
 function3()
-function4()
+functionWhatever()

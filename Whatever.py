@@ -54,6 +54,13 @@ class Level(object):
         # welcome and level number
         s = "Welcome to {}. \n".format(self.name)
 
+        for hint in self.hints.keys():
+            s += hint
+            
+        
+        # s += "Solutions: "
+        # for solution in self.solutions.keys():
+          #  s += solution + " "
         return s
 
 ###############################################################################
@@ -61,8 +68,7 @@ class Game(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
 
-    def createLevel(self):
-        global currentLevel
+    def createLevels(self):
 
         # creates rooms and gives them names
         intro = Level("The Game", "images/intro.gif")
@@ -70,9 +76,37 @@ class Game(Frame):
         l2 = Level("Level 2", "images/level2.gif")
         l3 = Level("Level 3", "images/level3.gif")
         l4 = Level("Level 4", "images/level4.gif")
-
+        outro = Level("The End", "images/outro.gif")
+        
         # intro level attributes
-    
+        intro.addSolution("enter", l1)
+        
+        # level 1 attributes
+        l1.addSolution("good luck", l2)
+        l1.addHint("It's easy as cba", l1)
+
+        # level 2 attributes
+        l2.addSolution("it only gets harder", l3)
+        l2.addHint("SOS", l2)
+
+        # level 3 attributes
+        l3.addSolution("pass", l4)
+        l3.addHint("Three is the Biggest one", l3)
+
+        # level 4 attributes
+        l4.addSolution("finale", outro)
+        l4.addHint("The grand", l4)
+
+        # outro level attributes
+        outro.addHint("Don't worry this is just the demo", outro)
+                      
+        
+        # make global variable currentLevel and set it to intro
+        global currentLevel
+        Game.currentLevel = intro 
+        
+                
+        
     def setUpGUI(self):
         self.pack(fill = BOTH, expand = 1)
 
@@ -123,15 +157,16 @@ class Game(Frame):
         self.setUpGUI()
 
         # sets up the image of the current Level
-        self.setRoomImage()
+        self.setLevelImage()
 
         # sets up the status
         self.setStatus("")
     
     def process(self, event):
+        chances = 3
         action = Game.player_input.get()
         action = action.lower()
-        response = "Invalid entry"
+        words = action
 
         if(action.strip() in ["quit", "bye", "exit"]):
             exit(0)
@@ -140,7 +175,20 @@ class Game(Frame):
             Game.player_input.delete(0, END)
             return
 
+        if(words in Game.currentLevel.solutions):
+            response = "Congrats, you made it to the next level"
+            chances = 3
+            Game.currentLevel = Game.currentLevel.solutions[words]
+        else:
+            response = "Incorrect"
+            chances -= 1
+
+        if(chances == 0):
+            Game.currentLevel = None
         
+        self.setStatus(response)
+        self.setLevelImage()
+        Game.player_input.delete(0, END)
         
 ###############################################################################
 # screen defaults
